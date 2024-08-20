@@ -9,6 +9,8 @@ import { Patient } from "../../types";
 
 import patientService from "../../services/patients";
 
+import Entries from "./Entries";
+
 const PatientPage = () => {
   const { patientId } = useParams();
 
@@ -39,9 +41,10 @@ const PatientPage = () => {
         <Typography align="left" variant="h5">
           {patient.name} ({patient.gender})
         </Typography>
-        {patient.ssn && <div>ssh: {patient.ssn}</div>}
+        {patient.ssn && <div>ssn: {patient.ssn}</div>}
         <div>occupation: {patient.occupation}</div>
       </Box>
+      <Entries entries={patient.entries} />
     </div>
   );
 };
