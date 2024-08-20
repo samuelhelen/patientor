@@ -1,6 +1,9 @@
+import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
+import MedicalInformationIcon from "@mui/icons-material/MedicalInformation";
+import MonitorWeightIcon from "@mui/icons-material/MonitorWeight";
+
 import {
   Diagnosis,
-  DiagnosisCodes,
   Entry,
   EntryType,
   OccupationalHealthcareEntry,
@@ -9,40 +12,15 @@ import {
 } from "../../types";
 import { assertNever } from "../../utils";
 
+import DiagnosisCodeList from "./DiagnosisCodeList";
+
+import HealthIndicator from "./HealthIndicator";
+
 const entryStyle = {
   borderStyle: "solid",
   borderColor: "black",
   padding: "1em",
   marginBottom: "0.5em",
-};
-
-const DiagnosisCodeList = ({
-  diagnoses,
-  diagnosisCodes,
-}: {
-  diagnoses: Diagnosis[];
-  diagnosisCodes: DiagnosisCodes | undefined;
-}) => {
-  if (!diagnosisCodes) {
-    return null;
-  }
-
-  const diagnosisNameFromCode = (diagnoses: Diagnosis[], code: string) => {
-    const diagnosis = diagnoses.find(
-      (diagnosis: Diagnosis) => diagnosis.code === code,
-    );
-    return diagnosis ? diagnosis.name : "";
-  };
-
-  return (
-    <ul>
-      {diagnosisCodes.map((code) => (
-        <li key={code}>
-          {code} {diagnosisNameFromCode(diagnoses, code)}
-        </li>
-      ))}
-    </ul>
-  );
 };
 
 const OccupationalHealthcareEntryDetails: React.FC<{
@@ -53,7 +31,8 @@ const OccupationalHealthcareEntryDetails: React.FC<{
   return (
     <div style={entryStyle}>
       <div>
-        {entry.date} {entry.type} {entry.employerName}
+        {entry.date} {/*entry.type*/} Occupational healthcare
+        <MedicalInformationIcon /> {entry.employerName}
       </div>
       <div>
         <i>{entry.description}</i>
@@ -80,7 +59,8 @@ const HospitalEntryDetails = ({
   return (
     <div style={entryStyle}>
       <div>
-        {entry.date} {entry.type}
+        {entry.date} {/*entry.type*/} Hospital
+        <LocalHospitalIcon />
       </div>
       <div>
         <i>{entry.description}</i>
@@ -107,12 +87,13 @@ const HealthCheckEntryDetails = ({
   return (
     <div style={entryStyle}>
       <div>
-        {entry.date} {entry.type}
+        {entry.date} {/*entry.type*/} Health check
+        <MonitorWeightIcon />
       </div>
       <div>
         <i>{entry.description}</i>
       </div>
-      <div>Health rating: {entry.healthCheckRating}</div>
+      <HealthIndicator rating={entry.healthCheckRating} />
       <div>
         <DiagnosisCodeList
           diagnosisCodes={entry.diagnosisCodes}
