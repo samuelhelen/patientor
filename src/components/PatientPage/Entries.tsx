@@ -1,28 +1,6 @@
-import { Entry, Diagnosis, DiagnosisCodes } from "../../types";
+import { Diagnosis, Entry } from "../../types";
 
-const DiagnosisCodeList = ({
-  diagnoses,
-  diagnosisCodes,
-}: {
-  diagnoses: Diagnosis[];
-  diagnosisCodes: DiagnosisCodes;
-}) => {
-  const diagnosisNameFromCode = (diagnoses: Diagnosis[], code: string) => {
-    const diagnosis = diagnoses.find(
-      (diagnosis: Diagnosis) => diagnosis.code === code,
-    );
-    return diagnosis ? diagnosis.name : "";
-  };
-  return (
-    <ul>
-      {diagnosisCodes.map((code) => (
-        <li key={code}>
-          {code} {diagnosisNameFromCode(diagnoses, code)}
-        </li>
-      ))}
-    </ul>
-  );
-};
+import EntryDetails from "./EntryDetails";
 
 const Entries = ({
   entries,
@@ -36,15 +14,7 @@ const Entries = ({
       <h4>entries</h4>
 
       {entries.map((entry) => (
-        <div key={entry.id}>
-          {entry.date} <i>{entry.description}</i>
-          {entry.diagnosisCodes && (
-            <DiagnosisCodeList
-              diagnosisCodes={entry.diagnosisCodes}
-              diagnoses={diagnoses}
-            />
-          )}
-        </div>
+        <EntryDetails key={entry.id} entry={entry} diagnoses={diagnoses} />
       ))}
     </div>
   );
