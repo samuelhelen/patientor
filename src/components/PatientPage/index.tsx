@@ -5,13 +5,13 @@ import { Box, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-import { Patient } from "../../types";
+import { Diagnosis, Patient } from "../../types";
 
 import patientService from "../../services/patients";
 
 import Entries from "./Entries";
 
-const PatientPage = () => {
+const PatientPage = ({ diagnoses }: { diagnoses: Diagnosis[] }) => {
   const { patientId } = useParams();
 
   const [patient, setPatient] = useState<Patient | null>(null);
@@ -44,7 +44,7 @@ const PatientPage = () => {
         {patient.ssn && <div>ssn: {patient.ssn}</div>}
         <div>occupation: {patient.occupation}</div>
       </Box>
-      <Entries entries={patient.entries} />
+      <Entries entries={patient.entries} diagnoses={diagnoses} />
     </div>
   );
 };
