@@ -12,6 +12,7 @@ import {
 
 import {
   CommonEntryFields,
+  DateRange,
   Diagnosis,
   Discharge,
   EntryFormValues,
@@ -42,14 +43,18 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
   >([]);
 
   // Specific Entry Fields
+  const [type, setType] = useState<EntryType>(EntryType.Hospital);
   // Hospital
   const [dischargeDate, setDischargeDate] = useState<Discharge["date"]>("");
   const [criteria, setCriteria] = useState("");
-
-  const [type, setType] = useState<EntryType>(EntryType.Hospital);
-
-  const [healthCheckRating, setHealthCheckRating] =
-    useState<HealthCheckRating>(0);
+  // OccupationalHealthcare
+  const [employerName, setEmployerName] = useState("");
+  const [sickStartDate, setSickStartDate] = useState("");
+  const [sickEndDate, setSickEndDate] = useState("");
+  // HealthCheck
+  const [healthCheckRating, setHealthCheckRating] = useState<HealthCheckRating>(
+    HealthCheckRating.Healthy,
+  );
 
   // Event handlers
 
@@ -66,9 +71,6 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
       console.error(
         "AddEntryForm onEntryTypeChange issue. You shouldn't be here.",
       );
-
-      // TODO: remove
-      console.log(`value: '${value}', entryTypeFields: '${entryTypeFields}'`);
 
       return;
     }
@@ -111,16 +113,28 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
             type,
           };
         }
-        // case EntryType.OccupationalHealthcare: {
+        case EntryType.OccupationalHealthcare: {
+          if (sickStartDate || sickEndDate) {
+            const sickLeave: DateRange = {
+              startDate: sickStartDate,
+              endDate: sickEndDate,
+            };
+            return {
+              ...commonFields,
+              type,
+              employerName,
+              sickLeave,
+            };
+          }
 
-        // }
+          return { ...commonFields, type, employerName };
+        }
         case EntryType.HealthCheck: {
-          const healthCheckEntryCandidate = {
+          return {
             ...commonFields,
             healthCheckRating,
             type,
           };
-          return healthCheckEntryCandidate;
         }
         default:
           throw new Error(
@@ -179,12 +193,21 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
           ))}
         </Select>
 
+        {/* TODO: refactor: */}
         <EntrySpecificFields
           type={type}
           dischargeDate={dischargeDate}
           setDischargeDate={setDischargeDate}
           criteria={criteria}
           setCriteria={setCriteria}
+          employerName={employerName}
+          setEmployerName={setEmployerName}
+          sickStartDate={sickStartDate}
+          setSickStartDate={setSickStartDate}
+          sickEndDate={sickEndDate}
+          setSickEndDate={setSickEndDate}
+          healthCheckRating={healthCheckRating}
+          setHealthCheckRating={setHealthCheckRating}
         />
 
         {/* TODO: refactor with AddPatientForm: */}

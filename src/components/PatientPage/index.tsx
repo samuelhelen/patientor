@@ -58,7 +58,7 @@ const PatientPage = ({ diagnoses }: { diagnoses: Diagnosis[] }) => {
     try {
       const entry = await patientService.createEntry(patient.id, values);
       setPatient({ ...patient, entries: [...patient.entries, entry] });
-      setModalOpen(false);
+      closeModal();
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         if (

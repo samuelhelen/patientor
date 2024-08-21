@@ -53,9 +53,9 @@ export enum HealthCheckRating {
   "HighRisk" = 2,
   "CriticalRisk" = 3,
 }
-export const healthCheckRatingFields = Object.values(HealthCheckRating).map(
-  (f) => Number(f),
-);
+export const healthCheckRatingFields: HealthCheckRating[] = Object.values(
+  HealthCheckRating,
+).filter((v) => typeof v === "number");
 
 export interface HealthCheckEntry extends BaseEntry {
   // type: "HealthCheck";

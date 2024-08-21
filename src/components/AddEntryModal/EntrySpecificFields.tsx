@@ -1,30 +1,79 @@
-import { Dispatch, /*ChangeEvent,*/ SetStateAction } from "react";
+import { Dispatch, SetStateAction } from "react";
 
 import {
-  // InputLabel,
-  // Select,
-  // SelectChangeEvent,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
   TextField,
 } from "@mui/material";
 
-import { Discharge, EntryType } from "../../types";
+import {
+  EntryType,
+  HealthCheckRating,
+  healthCheckRatingFields,
+} from "../../types";
 
+const healthCheckRatingOptions = healthCheckRatingFields.map((v) => ({
+  value: HealthCheckRating[v],
+  label: v,
+}));
+
+type StringSetter = Dispatch<SetStateAction<string>>;
 const EntrySpecificFields = ({
   type,
   dischargeDate,
   setDischargeDate,
   criteria,
   setCriteria,
+  employerName,
+  setEmployerName,
+  sickStartDate,
+  setSickStartDate,
+  sickEndDate,
+  setSickEndDate,
+  healthCheckRating,
+  setHealthCheckRating,
 }: {
   type: EntryType;
   dischargeDate: string;
-  setDischargeDate: Dispatch<SetStateAction<Discharge["date"]>>;
+  setDischargeDate: StringSetter;
   criteria: string;
-  setCriteria: Dispatch<SetStateAction<string>>;
+  setCriteria: StringSetter;
+  employerName: string;
+  setEmployerName: StringSetter;
+  sickStartDate: string;
+  setSickStartDate: StringSetter;
+  sickEndDate: string;
+  setSickEndDate: StringSetter;
+  healthCheckRating: HealthCheckRating;
+  setHealthCheckRating: Dispatch<SetStateAction<HealthCheckRating>>;
 }) => {
-  // OccupationalHealthcare
+  // TODO: possibly refactor with AddEntryForm onEntryTypeChange:
+  const onHealthCheckRatingChange = (event: SelectChangeEvent<string>) => {
+    event.preventDefault();
 
-  // HealthCheck
+    const value = event.target.value;
+
+    type Headache = keyof typeof HealthCheckRating;
+
+    const isHcrStringKey = (variable: string): variable is Headache => {
+      const hcrStrings = healthCheckRatingFields.map(
+        (n) => HealthCheckRating[n],
+      );
+      return hcrStrings.includes(variable);
+    };
+
+    if (!isHcrStringKey(value)) {
+      console.error("EntrySpecificFields onHealthCheckRatingChange issue.");
+
+      return;
+    }
+    const hcrValue: Headache = value;
+
+    const healthCheckRating: HealthCheckRating = HealthCheckRating[hcrValue];
+    setHealthCheckRating(healthCheckRating);
+  };
 
   switch (type) {
     case EntryType.Hospital: {
@@ -38,7 +87,7 @@ const EntrySpecificFields = ({
             onChange={({ target }) => setDischargeDate(target.value)}
           />
           <TextField
-            label="Criteria"
+            label="Discharge criteria"
             fullWidth
             value={criteria}
             onChange={({ target }) => setCriteria(target.value)}
@@ -49,33 +98,59 @@ const EntrySpecificFields = ({
     case EntryType.OccupationalHealthcare: {
       return (
         <>
-          <h1>TODO</h1>
+          <TextField
+            label="Employer name"
+            fullWidth
+            value={employerName}
+            onChange={({ target }) => setEmployerName(target.value)}
+          />
+
+          <InputLabel style={{ marginTop: 20 }} htmlFor="sick-leave">
+            Sick leave (optional)
+          </InputLabel>
+          <fieldset id="sick-leave" style={{ borderStyle: "none" }}>
+            <TextField
+              label="Start date"
+              placeholder="YYYY-MM-DD"
+              fullWidth
+              value={sickStartDate}
+              onChange={({ target }) => setSickStartDate(target.value)}
+            />
+            <TextField
+              label="End date"
+              placeholder="YYYY-MM-DD"
+              fullWidth
+              value={sickEndDate}
+              onChange={({ target }) => setSickEndDate(target.value)}
+            />
+          </fieldset>
         </>
       );
     }
     case EntryType.HealthCheck: {
       return (
         <>
-          <h1>TODO</h1>
+          <InputLabel>Health check rating</InputLabel>
+          <Select
+            label="Health check rating"
+            fullWidth
+            value={HealthCheckRating[healthCheckRating]}
+            onChange={onHealthCheckRatingChange}
+          >
+            {healthCheckRatingOptions.map((option) => (
+              <MenuItem key={option.label} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </Select>
         </>
       );
     }
     default: {
-      return <div>You shold not see this but entry type specific inputs</div>;
+      return (
+        <div>Error: You shold not see this but entry type specific inputs</div>
+      );
     }
-    // <InputLabel>Entry type</InputLabel>
-    // <Select
-    //   label="EntryType"
-    //   fullWidth
-    //   value={type}
-    //   onChange={onEntryTypeChange}
-    // >
-    //   {entryTypeOptions.map((option) => (
-    //     <MenuItem key={option.label} value={option.value}>
-    //       {option.label}
-    //     </MenuItem>
-    //   ))}
-    // </Select>
   }
 };
 
