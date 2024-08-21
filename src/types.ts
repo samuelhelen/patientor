@@ -11,9 +11,7 @@ export enum EntryType {
   HealthCheck = "HealthCheck",
   Hospital = "Hospital",
 }
-export const entryTypeFields: string[] = Object.values(EntryType).map(
-  (f) => ~~f.toString(),
-);
+export const entryTypeFields: string[] = Object.values(EntryType);
 
 export type DiagnosisCodes = Array<Diagnosis["code"]>;
 
@@ -69,6 +67,17 @@ export type Entry =
   | OccupationalHealthcareEntry
   | HospitalEntry
   | HealthCheckEntry;
+
+// export type CommonEntryFields = Omit<BaseEntry, "id"> & { type: EntryType };
+export type CommonEntryFields = Omit<BaseEntry, "id">;
+
+// https://github.com/microsoft/TypeScript/issues/42680
+// Omit utility type for unions:
+type UnionOmit<T, K extends string | number | symbol> = T extends unknown
+  ? Omit<T, K>
+  : never;
+
+export type EntryFormValues = UnionOmit<Entry, "id">;
 
 // PATIENT TYPES
 
