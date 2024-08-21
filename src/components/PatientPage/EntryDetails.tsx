@@ -37,6 +37,12 @@ const OccupationalHealthcareEntryDetails: React.FC<{
       <div>
         <i>{entry.description}</i>
       </div>
+      {entry.sickLeave && (
+        <div>
+          Sick leave from {entry.sickLeave.startDate} to{" "}
+          {entry.sickLeave.endDate}
+        </div>
+      )}
       <div>
         <DiagnosisCodeList
           diagnosisCodes={entry.diagnosisCodes}
@@ -65,6 +71,12 @@ const HospitalEntryDetails = ({
       <div>
         <i>{entry.description}</i>
       </div>
+      {entry.discharge && (
+        <div>
+          Discharged until {entry.discharge.date} with the following criteria:{" "}
+          {entry.discharge.criteria}
+        </div>
+      )}
       <div>
         <DiagnosisCodeList
           diagnosisCodes={entry.diagnosisCodes}
