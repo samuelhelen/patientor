@@ -14,6 +14,8 @@ import {
   healthCheckRatingFields,
 } from "../../types";
 
+import Date from "./Date";
+
 const healthCheckRatingOptions = healthCheckRatingFields.map((v) => ({
   value: HealthCheckRating[v],
   label: v,
@@ -79,12 +81,10 @@ const EntrySpecificFields = ({
     case EntryType.Hospital: {
       return (
         <>
-          <TextField
+          <Date
             label="Discharge date"
-            placeholder="YYYY-MM-DD"
-            fullWidth
-            value={dischargeDate}
-            onChange={({ target }) => setDischargeDate(target.value)}
+            date={dischargeDate}
+            setDate={setDischargeDate}
           />
           <TextField
             label="Discharge criteria"
@@ -109,19 +109,15 @@ const EntrySpecificFields = ({
             Sick leave (optional)
           </InputLabel>
           <fieldset id="sick-leave" style={{ borderStyle: "none" }}>
-            <TextField
+            <Date
               label="Start date"
-              placeholder="YYYY-MM-DD"
-              fullWidth
-              value={sickStartDate}
-              onChange={({ target }) => setSickStartDate(target.value)}
+              date={sickStartDate}
+              setDate={setSickStartDate}
             />
-            <TextField
+            <Date
               label="End date"
-              placeholder="YYYY-MM-DD"
-              fullWidth
-              value={sickEndDate}
-              onChange={({ target }) => setSickEndDate(target.value)}
+              date={sickEndDate}
+              setDate={setSickEndDate}
             />
           </fieldset>
         </>

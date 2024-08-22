@@ -2,14 +2,14 @@ import { useState, SyntheticEvent } from "react";
 
 import {
   Box,
+  Button,
   FormControl,
-  TextField,
+  Grid,
   InputLabel,
   MenuItem,
   Select,
-  Grid,
-  Button,
   SelectChangeEvent,
+  TextField,
 } from "@mui/material";
 
 import {
@@ -24,6 +24,7 @@ import {
 } from "../../types";
 
 import EntrySpecificFields from "./EntrySpecificFields";
+import Date from "./Date";
 
 const entryTypeOptions: Array<{ value: EntryType; label: string }> =
   Object.values(EntryType).map((v) => ({
@@ -186,13 +187,8 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
           value={specialist}
           onChange={({ target }) => setSpecialist(target.value)}
         />
-        <TextField
-          label="Date"
-          placeholder="YYYY-MM-DD"
-          fullWidth
-          value={date}
-          onChange={({ target }) => setDate(target.value)}
-        />
+
+        <Date label="Date" date={date} setDate={setDate} />
 
         {/* TODO: Refactor into its own component: */}
         <InputLabel style={{ marginTop: 20 }} htmlFor="diagnosis-codes">
