@@ -1,6 +1,8 @@
-import { useState, ChangeEvent, SyntheticEvent } from "react";
+import { useState, SyntheticEvent } from "react";
 
 import {
+  Box,
+  FormControl,
   TextField,
   InputLabel,
   MenuItem,
@@ -38,7 +40,12 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
   const [description, setDescription] = useState("");
   const [specialist, setSpecialist] = useState("");
   const [date, setDate] = useState("");
+
   const [diagnosisCodes, setDiagnosisCodes] = useState<
+    Array<Diagnosis["code"]>
+  >([]);
+  const [diagnosisCode, setDiagnosisCode] = useState<Diagnosis["code"]>("");
+  const [availableDiagnosisCodes, setAvailableDiagnosisCodes] = useState<
     Array<Diagnosis["code"]>
   >([]);
 
@@ -78,13 +85,29 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
     setType(entryType);
   };
 
-  const onDiagnosisCodesChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const codes = event.target.value.split(", ");
-    if (codes.length === 0 || codes[0] === "") {
-      setDiagnosisCodes([]);
+  const onAddDiagnosisCode = () => {
+    const regex = /^[A-Z]\d\d\.([A-Z0-9]){1,3}$/;
+    if (!regex.test(diagnosisCode)) {
+      // IS AN INVALID DIAGNOSIS CODE
+      // TODO:
       return;
     }
-    setDiagnosisCodes(codes);
+
+    if (availableDiagnosisCodes.includes(diagnosisCode)) {
+      // ALREADY EXISTS
+    } else {
+      setAvailableDiagnosisCodes(availableDiagnosisCodes.concat(diagnosisCode));
+    }
+
+    setDiagnosisCode("");
+  };
+
+  const onDiagnosisCodesChange = (
+    event: SelectChangeEvent<typeof diagnosisCodes>,
+  ) => {
+    event.preventDefault();
+    const codes = event.target.value;
+    setDiagnosisCodes(typeof codes === "string" ? codes.split(",") : codes);
   };
 
   const addEntry = (event: SyntheticEvent) => {
@@ -170,13 +193,50 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
           value={date}
           onChange={({ target }) => setDate(target.value)}
         />
-        <TextField
-          label="Diagnosis codes (optional)"
-          placeholder="Z57.1, N30.0"
-          fullWidth
-          value={diagnosisCodes}
-          onChange={onDiagnosisCodesChange}
-        />
+
+        {/* TODO: Refactor into its own component: */}
+        <InputLabel style={{ marginTop: 20 }} htmlFor="diagnosis-codes">
+          Diagnosis codes (optional)
+        </InputLabel>
+        <fieldset id="diagnosis-codes" style={{ borderStyle: "none" }}>
+          <Box display="flex">
+            <TextField
+              label="Add diagnosis code for selection (format A00.000)"
+              placeholder="Z57.1"
+              fullWidth
+              value={diagnosisCode}
+              onChange={({ target }) => setDiagnosisCode(target.value)}
+            />
+            <Button
+              color="secondary"
+              variant="contained"
+              style={{ float: "left" }}
+              type="button"
+              onClick={onAddDiagnosisCode}
+            >
+              Add
+            </Button>
+          </Box>
+          <FormControl fullWidth>
+            <InputLabel id="selected-diagnosis-codes">
+              Selected diagnosis codes
+            </InputLabel>
+            <Select
+              labelId="selected-diagnosis-codes"
+              label="Selected diagnosis codes"
+              fullWidth
+              value={diagnosisCodes}
+              onChange={onDiagnosisCodesChange}
+              multiple
+            >
+              {availableDiagnosisCodes.map((code) => (
+                <MenuItem key={code} value={code}>
+                  {code}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </fieldset>
 
         <InputLabel style={{ marginTop: 20 }}>Entry type</InputLabel>
         <Select
@@ -214,7 +274,7 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
         <Grid>
           <Grid item>
             <Button
-              color="secondary"
+              color="warning"
               variant="contained"
               style={{ float: "left" }}
               type="button"
